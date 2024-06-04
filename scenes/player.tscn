@@ -1,8 +1,10 @@
-[gd_scene load_steps=46 format=3 uid="uid://ctcgxf0yxby8x"]
+[gd_scene load_steps=49 format=3 uid="uid://ctcgxf0yxby8x"]
 
 [ext_resource type="Texture2D" uid="uid://t34am58s4mjo" path="res://assets/sprites/knight.png" id="1_26kr6"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_uanci"]
+[ext_resource type="Resource" uid="uid://b0abkchs82yi2" path="res://Inventory/player_inventory.tres" id="2_ch86x"]
 [ext_resource type="Texture2D" uid="uid://ds0c10kgdm72o" path="res://assets/sprites/knight_attack.png" id="2_yupr1"]
+[ext_resource type="PackedScene" uid="uid://b88xpfqbphtqa" path="res://Inventory/inv_ui.tscn" id="5_isgo3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lf0wd"]
 atlas = ExtResource("1_26kr6")
@@ -313,10 +315,14 @@ radius = 6.0
 radius = 6.0
 height = 18.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qdxrf"]
+size = Vector2(12, 14)
+
 [node name="Player" type="CharacterBody2D"]
 z_index = 5
 collision_layer = 3
 script = ExtResource("1_uanci")
+inv = ExtResource("2_ch86x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -12)
@@ -342,4 +348,35 @@ disabled = true
 position = Vector2(0, -9)
 shape = SubResource("CapsuleShape2D_rukuc")
 
+[node name="Healthbar" type="ProgressBar" parent="."]
+modulate = Color(0.0862745, 0.905882, 0, 1)
+offset_left = -7.0
+offset_top = -22.0
+offset_right = 133.0
+offset_bottom = 5.0
+scale = Vector2(0.1, 0.1)
+max_value = 150.0
+show_percentage = false
+
+[node name="Regentimer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[node name="Inv_UI" parent="." instance=ExtResource("5_isgo3")]
+offset_left = -40.0
+offset_top = -84.0
+offset_right = 40.0
+offset_bottom = -24.0
+
+[node name="Interactions" type="Node2D" parent="."]
+
+[node name="Area2D" type="Area2D" parent="Interactions"]
+collision_layer = 4
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactions/Area2D"]
+position = Vector2(5, -9)
+shape = SubResource("RectangleShape2D_qdxrf")
+
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]
+[connection signal="timeout" from="Regentimer" to="." method="_on_regentimer_timeout"]

@@ -416,10 +416,20 @@ shape = SubResource("CircleShape2D_qbyme")
 position = Vector2(16, -9)
 shape = SubResource("RectangleShape2D_fjdih")
 
+[node name="Healthbar" type="ProgressBar" parent="."]
+modulate = Color(0.0862745, 0.905882, 0, 1)
+offset_left = -7.0
+offset_top = -23.0
+offset_right = 133.0
+offset_bottom = 4.0
+scale = Vector2(0.1, 0.1)
+max_value = 50.0
+show_percentage = false
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]
 [connection signal="area_entered" from="DealDamageArea" to="." method="_on_deal_damage_area_area_entered"]
-[connection signal="body_entered" from="Detection_area" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_entered" from="Detection_area" to="." method="_on_collisionarea_body_entered"]
-[connection signal="body_exited" from="Detection_area" to="." method="_on_detection_area_body_exited"]
+[connection signal="body_entered" from="Detection_area" to="." method="_on_detection_area_body_entered"]
 [connection signal="body_exited" from="Detection_area" to="." method="_on_collisionarea_body_exited"]
+[connection signal="body_exited" from="Detection_area" to="." method="_on_detection_area_body_exited"]

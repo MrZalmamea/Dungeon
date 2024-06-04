@@ -1,37 +1,36 @@
 extends CharacterBody2D
 
-class_name commander
+class_name General
 
 const speed = 30
-var direction: Vector2
+var is_general_chase: bool
 
 var health = 50
 var health_max = 50
-var health_min = 0 
+var health_min = 0
 
 var dead: bool = false
 var taking_damage: bool = false
-var damage_to_deal = 25
+var damage_to_deal = 10
 var is_dealing_damage: bool = false
 
+var direction: Vector2
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var knockback_force = 200
 var is_roaming: bool = true
-
-var is_commander_chase: bool = false
 
 var player: CharacterBody2D
 
 signal enemy_defeated
 
-@onready var detection_area = $Detection_area
+@onready var detection_area = $DetectionArea
 
 func _ready():
-	is_commander_chase = false
-	
+	Global.is_general_chase = is_general_chase
+
 func _process(delta):
-	Global.commanderDamageAmount = damage_to_deal
-	Global.commanderDamamgeZone = $DealDamageArea
+	Global.generalDamageAmount = damage_to_deal
+	Global.generalDamageZone = $GeneralDealDamageArea
 	
 	if !is_on_floor():
 		velocity.y += gravity * delta
@@ -49,7 +48,7 @@ func move(delta):
 	player = Global.playerBody
 	if !dead:
 		is_roaming = true
-		if !taking_damage and is_commander_chase and Global.playerAlive:
+		if !taking_damage and is_general_chase and Global.playerAlive:
 			velocity = position.direction_to(player.position) * speed
 			direction.x = abs(velocity.x) / velocity.x
 		elif taking_damage:
@@ -59,11 +58,11 @@ func move(delta):
 			velocity += direction * speed * delta
 	elif dead:
 		velocity.x = 0
-
-func _on_timer_timeout():
-	var timer = $Timer
-	timer.wait_time = choose([0.1, 0.25, 0.5, 1.0])
-	if !is_commander_chase:
+		
+func _on_direction_timer_timeout():
+	var direction_timer = $DirectionTimer
+	direction_timer.wait_time = choose([0.1, 0.25, 0.5, 1.0])
+	if !is_general_chase:
 		direction = choose([Vector2.RIGHT, Vector2.LEFT])
 		velocity.x = 0
 	
@@ -84,21 +83,22 @@ func handle_animation():
 			animated_sprite.play("walk")
 			animated_sprite.flip_h = false
 			detection_area.scale.x = 1
-	elif !dead and taking_damage and !is_dealing_damage:
-		animated_sprite.play("hurt")
+	elif !dead and taking_damage:
+		#animated_sprite.play("hurt")
 		await get_tree().create_timer(0.8).timeout
 		taking_damage = false
 	elif !dead and is_dealing_damage:
-		animated_sprite.play("single_attack")
+		#animated_sprite.play("single_attack")
 		await get_tree().create_timer(0.6).timeout
 	if dead and is_roaming:
 		is_roaming = false
-		animated_sprite.play("death")
+		#animated_sprite.play("death")
 		emit_signal("enemy_defeated")
 		set_collision_layer_value(1, true)
 		set_collision_layer_value(2, false)
 		set_collision_mask_value(1, true)
 		set_collision_mask_value(2, false)
+
 
 func _on_hitbox_area_entered(area):
 	if area == Global.playerDamageZone:
@@ -108,26 +108,28 @@ func _on_hitbox_area_entered(area):
 func take_damage(damage):
 	health -= damage
 	taking_damage = true
-	if health <= health_min:
-		health = health_min
+	if health <= 0:
+		health = 0
 		dead = true
 
-func _on_deal_damage_area_area_entered(area):
-	if area == Global.playerHitbox:
-		is_dealing_damage = true
-		await get_tree().create_timer(1.0).timeout
-		is_dealing_damage = false
 
 func _on_detection_area_body_entered(body):
 	if body is Player:
-		is_commander_chase = true
+		is_general_chase = true
 		is_roaming = false
 
 
 func _on_detection_area_body_exited(body):
 	if body is Player:
-		is_commander_chase = false
+		is_general_chase = false
 		is_roaming = true
+
+
+func _on_general_deal_damage_area_area_entered(area):
+	if area == Global.playerHitbox:
+		is_dealing_damage = true
+		await get_tree().create_timer(1.0).timeout
+		is_dealing_damage = false
 		
 func update_health():
 	var healthbar = $Healthbar

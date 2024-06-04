@@ -1,0 +1,131 @@
+[gd_scene load_steps=16 format=3 uid="uid://do3xecm8bma1j"]
+
+[ext_resource type="Script" path="res://scripts/general.gd" id="1_4oc1a"]
+[ext_resource type="Texture2D" uid="uid://cq1liokolyxnr" path="res://assets/sprites/general_knight.png" id="2_3cdsg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trodt"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0lan"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gxdwc"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ih4kr"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dj8uf"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vubmb"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1parf"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_58hlj"]
+atlas = ExtResource("2_3cdsg")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vduag"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trodt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a0lan")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gxdwc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ih4kr")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dj8uf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vubmb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1parf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_58hlj")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 6.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_e16oj"]
+radius = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1jdds"]
+radius = 17.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dnuu6"]
+radius = 20.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2e08g"]
+size = Vector2(42.5, 9)
+
+[node name="general" type="CharacterBody2D"]
+script = ExtResource("1_4oc1a")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_vduag")
+animation = &"walk"
+frame = 1
+frame_progress = 0.320201
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_e16oj")
+
+[node name="DirectionTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("CircleShape2D_1jdds")
+
+[node name="GeneralDealDamageArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GeneralDealDamageArea"]
+shape = SubResource("CircleShape2D_dnuu6")
+
+[node name="DetectionArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea"]
+position = Vector2(13.75, -1)
+shape = SubResource("RectangleShape2D_2e08g")
+
+[node name="Healthbar" type="ProgressBar" parent="."]
+modulate = Color(0.0862745, 0.905882, 0, 1)
+offset_left = -9.0
+offset_top = -18.0
+offset_right = 171.0
+offset_bottom = 9.0
+scale = Vector2(0.1, 0.1)
+max_value = 50.0
+show_percentage = false
+
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]
+[connection signal="area_entered" from="GeneralDealDamageArea" to="." method="_on_general_deal_damage_area_area_entered"]
+[connection signal="body_entered" from="DetectionArea" to="." method="_on_detection_area_body_entered"]
+[connection signal="body_exited" from="DetectionArea" to="." method="_on_detection_area_body_exited"]

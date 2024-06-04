@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="InvItem" load_steps=3 format=3 uid="uid://c2gftdu4nrs07"]
+
+[ext_resource type="Script" path="res://Inventory/inventory_item.gd" id="1_wvesg"]
+[ext_resource type="Texture2D" uid="uid://bcsdua3otb87a" path="res://assets/Pixel Potion Pack - FINISHED/Bubbly Brew Bottle/RED/Sprites/Bubbly Brew Bottle - RED - 0000.png" id="2_tj5i1"]
+
+[resource]
+script = ExtResource("1_wvesg")
+name = "heathpotion"
+texture = ExtResource("2_tj5i1")
